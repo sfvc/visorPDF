@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Municipalidad de SFVC - Libre Deuda</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Municipalidad de San Fernando del Valle de Catamarca</title>
   <style>
     body, html {
       margin: 0;
@@ -18,16 +18,16 @@
   </style>
 </head>
 <body>
-  <iframe id="pdfViewer" src=""></iframe>
-
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const fileUrl = params.get("file");
+    const urlParams = new URLSearchParams(window.location.search);
+    const file = urlParams.get("file");
 
-    if (fileUrl) {
-      document.getElementById("pdfViewer").src = fileUrl;
+    if (file) {
+      const iframe = document.createElement("iframe");
+      iframe.src = decodeURIComponent(file);
+      document.body.appendChild(iframe);
     } else {
-      document.body.innerHTML = "<p style='text-align:center;margin-top:2rem;'>No se encontró un archivo para mostrar.</p>";
+      document.body.innerHTML = "<p>No se proporcionó un archivo válido.</p>";
     }
   </script>
 </body>
