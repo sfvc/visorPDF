@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.png" />
   <title>Municipalidad de San Fernando del Valle de Catamarca</title>
   <style>
     body, html {
@@ -20,21 +20,15 @@
 </head>
 <body>
   <script>
-    // Mapa de identificadores cortos a URLs reales
-    const pdfs = {
-      "281": "https://archivos.sfo3.digitaloceanspaces.com/Juzgado/Libre-deuda/43532773_2025-06-03.pdf"
-      // Agregá más entradas como: "282": "URL-del-otro-pdf"
-    };
+    const urlParams = new URLSearchParams(window.location.search);
+    const file = urlParams.get("file");
 
-    const pathSegments = window.location.pathname.split("/");
-    const id = pathSegments.pop() || pathSegments.pop(); // Elimina último segmento (o el anterior si termina en "/")
-
-    if (pdfs[id]) {
+    if (file) {
       const iframe = document.createElement("iframe");
-      iframe.src = pdfs[id];
+      iframe.src = decodeURIComponent(file);
       document.body.appendChild(iframe);
     } else {
-      document.body.innerHTML = "<p>Archivo no encontrado o inválido.</p>";
+      document.body.innerHTML = "<p>No se proporcionó un archivo válido.</p>";
     }
   </script>
 </body>
