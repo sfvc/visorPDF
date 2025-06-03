@@ -6,15 +6,22 @@
   <link rel="icon" type="image/svg+xml" href="/favicon.png" />
   <title>Municipalidad de San Fernando del Valle de Catamarca</title>
   <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background-color: #1e1e1e;
+      font-family: sans-serif;
     }
     iframe {
       width: 100%;
       height: 100%;
       border: none;
+    }
+    .error {
+      color: white;
+      text-align: center;
+      margin-top: 40vh;
+      font-size: 1.2rem;
+      padding: 0 10px;
     }
   </style>
 </head>
@@ -28,7 +35,7 @@
       iframe.src = decodeURIComponent(file);
       document.body.appendChild(iframe);
     } else {
-      document.body.innerHTML = "<p>No se proporcionó un archivo válido.</p>";
+      document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
     }
   </script>
 </body>
