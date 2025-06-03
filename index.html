@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Municipalidad de SFVC - Libre Deuda</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="pdfViewer" src=""></iframe>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const fileUrl = params.get("file");
+
+    if (fileUrl) {
+      document.getElementById("pdfViewer").src = fileUrl;
+    } else {
+      document.body.innerHTML = "<p style='text-align:center;margin-top:2rem;'>No se encontró un archivo para mostrar.</p>";
+    }
+  </script>
+</body>
+</html>
