@@ -1,33 +1,41 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Municipalidad de San Fernando del Valle de Catamarca</title>
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100%;
+      background-color: #1e1e1e;
+      font-family: sans-serif;
     }
     iframe {
       width: 100%;
       height: 100%;
       border: none;
     }
+    .error {
+      color: white;
+      text-align: center;
+      margin-top: 40vh;
+      font-size: 1.2rem;
+    }
   </style>
 </head>
 <body>
+  <iframe id="viewer" allowfullscreen></iframe>
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const file = urlParams.get("file");
 
     if (file) {
-      const iframe = document.createElement("iframe");
-      iframe.src = decodeURIComponent(file);
-      document.body.appendChild(iframe);
+      const viewer = document.getElementById("viewer");
+      viewer.src = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${encodeURIComponent(file)}`;
     } else {
-      document.body.innerHTML = "<p>No se proporcionó un archivo válido.</p>";
+      document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
     }
   </script>
 </body>
