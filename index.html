@@ -26,17 +26,24 @@
   </style>
 </head>
 <body>
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const file = urlParams.get("file");
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const file = urlParams.get("file");
 
-    if (file) {
-      const iframe = document.createElement("iframe");
-      iframe.src = decodeURIComponent(file);
-      document.body.appendChild(iframe);
-    } else {
-      document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
-    }
-  </script>
+  if (file) {
+    const iframe = document.createElement("iframe");
+    iframe.src = decodeURIComponent(file);
+
+    iframe.onerror = () => {
+      setTimeout(() => {
+        iframe.src = decodeURIComponent(file);
+      }, 1000);
+    };
+
+    document.body.appendChild(iframe);
+  } else {
+    document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
+  }
+</script>
 </body>
 </html>
