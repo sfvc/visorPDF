@@ -64,7 +64,10 @@
       const fileUrl = decodeURIComponent(file);
       iframe.src = fileUrl;
 
+      let fallbackTimeout;
+
       iframe.onload = () => {
+        clearTimeout(fallbackTimeout);
         document.getElementById('loader').style.display = 'none';
         iframe.style.display = 'block';
       };
@@ -72,6 +75,10 @@
       iframe.onerror = () => {
         setTimeout(() => {
           iframe.src = fileUrl;
+        }, 3000);
+
+        fallbackTimeout = setTimeout(() => {
+          location.reload();
         }, 7000);
       };
 
