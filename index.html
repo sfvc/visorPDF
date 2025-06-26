@@ -1,22 +1,58 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/svg+xml" href="/favicon.png" />
   <title>Municipalidad de San Fernando del Valle de Catamarca</title>
   <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%;
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       background-color: #1e1e1e;
       font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
     }
+
+    .navbar__muni {
+      background-color: #232D4F;
+    }
+
+    .text-white {
+      color: white;
+    }
+
+    .py-2 {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .custom-container {
+      max-width: 1280px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .custom-logo {
+      max-width: 100%;
+      height: 3rem;
+      width: auto;
+      margin: 0.5rem;
+    }
+
     iframe {
-      width: 100%;
-      height: 100%;
+      flex: 1;
       border: none;
       display: none;
     }
+
     .error {
       color: white;
       text-align: center;
@@ -24,6 +60,7 @@
       font-size: 1.2rem;
       padding: 0 10px;
     }
+
     .loader {
       display: flex;
       align-items: center;
@@ -33,6 +70,7 @@
       font-size: 1.2rem;
       flex-direction: column;
     }
+
     .spinner {
       border: 4px solid rgba(255, 255, 255, 0.1);
       border-left-color: white;
@@ -42,6 +80,7 @@
       animation: spin 1s linear infinite;
       margin-bottom: 1rem;
     }
+
     @keyframes spin {
       to {
         transform: rotate(360deg);
@@ -49,7 +88,16 @@
     }
   </style>
 </head>
+
 <body>
+  <header class="navbar__muni text-white py-2">
+    <div class="custom-container">
+      <a href="https://www.catamarcaciudad.gob.ar" target="_blank" rel="noreferrer">
+        <img src="./logo-capital-dark.webp" alt="Logo Catamarca" class="custom-logo" />
+      </a>
+    </div>
+  </header>
+
   <div id="loader" class="loader">
     <div class="spinner"></div>
     Cargando documento...
@@ -88,4 +136,5 @@
     }
   </script>
 </body>
+
 </html>
