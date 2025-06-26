@@ -1,30 +1,38 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visor PDF como Imagen</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.png" />
+  <title>Municipalidad de San Fernando del Valle de Catamarca</title>
   <style>
-    html,
-    body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
+    html, body {
+      margin: 0; padding: 0; height: 100%;
       background-color: #1e1e1e;
-      color: #fff;
       font-family: sans-serif;
     }
-
-    #loader {
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: none;
+    }
+    .error {
+      color: white;
+      text-align: center;
+      margin-top: 40vh;
+      font-size: 1.2rem;
+      padding: 0 10px;
+    }
+    .loader {
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100%;
+      color: white;
+      font-size: 1.2rem;
       flex-direction: column;
     }
-
     .spinner {
       border: 4px solid rgba(255, 255, 255, 0.1);
       border-left-color: white;
@@ -34,79 +42,50 @@
       animation: spin 1s linear infinite;
       margin-bottom: 1rem;
     }
-
     @keyframes spin {
       to {
         transform: rotate(360deg);
       }
     }
-
-    #pdf-images {
-      padding: 1rem;
-    }
-
-    canvas {
-      display: block;
-      margin: 1rem auto;
-      border: 1px solid #444;
-    }
-
-    .error {
-      text-align: center;
-      margin-top: 40vh;
-      font-size: 1.2rem;
-      padding: 0 10px;
-    }
   </style>
 </head>
-
 <body>
-  <div id="loader">
+  <div id="loader" class="loader">
     <div class="spinner"></div>
     Cargando documento...
   </div>
-  <div id="pdf-images" style="display:none;"></div>
 
   <script>
-    (async () => {
-      const params = new URLSearchParams(window.location.search);
-      const fileParam = params.get('file');
-      if (!fileParam) {
-        document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
-        return;
-      }
-      const pdfUrl = decodeURIComponent(fileParam);
+    const urlParams = new URLSearchParams(window.location.search);
+    const file = urlParams.get("file");
 
-      pdfjsLib.GlobalWorkerOptions.workerSrc =
-        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    if (file) {
+      const iframe = document.createElement("iframe");
+      const fileUrl = decodeURIComponent(file);
+      iframe.src = fileUrl;
 
-      try {
-        const resp = await fetch(pdfUrl);
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        const pdfData = await resp.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+      let fallbackTimeout;
 
-        const container = document.getElementById('pdf-images');
-        const total = pdf.numPages;
+      iframe.onload = () => {
+        clearTimeout(fallbackTimeout);
         document.getElementById('loader').style.display = 'none';
-        container.style.display = 'block';
+        iframe.style.display = 'block';
+      };
 
-        for (let num = 1; num <= total; num++) {
-          const page = await pdf.getPage(num);
-          const viewport = page.getViewport({ scale: 2 });
-          const canvas = document.createElement('canvas');
-          canvas.width = viewport.width;
-          canvas.height = viewport.height;
-          const ctx = canvas.getContext('2d');
-          await page.render({ canvasContext: ctx, viewport }).promise;
-          container.appendChild(canvas);
-        }
-      } catch (err) {
-        document.body.innerHTML =
-          `<div class="error">Error al cargar el PDF:<br>${err.message}</div>`;
-      }
-    })();
+      iframe.onerror = () => {
+        setTimeout(() => {
+          iframe.src = fileUrl;
+        }, 3000);
+
+        fallbackTimeout = setTimeout(() => {
+          location.reload();
+        }, 7000);
+      };
+
+      document.body.appendChild(iframe);
+    } else {
+      document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
+    }
   </script>
 </body>
-
 </html>
