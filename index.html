@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Visor PDF como Imagen</title>
-  <!-- Carga la librería pdf.js desde un CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <style>
-    html, body {
-      margin: 0; padding: 0; height: 100%;
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
       background-color: #1e1e1e;
       color: #fff;
       font-family: sans-serif;
     }
+
     #loader {
       display: flex;
       align-items: center;
@@ -20,8 +24,9 @@
       height: 100%;
       flex-direction: column;
     }
+
     .spinner {
-      border: 4px solid rgba(255,255,255,0.1);
+      border: 4px solid rgba(255, 255, 255, 0.1);
       border-left-color: white;
       border-radius: 50%;
       width: 40px;
@@ -29,15 +34,23 @@
       animation: spin 1s linear infinite;
       margin-bottom: 1rem;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     #pdf-images {
       padding: 1rem;
     }
+
     canvas {
       display: block;
       margin: 1rem auto;
       border: 1px solid #444;
     }
+
     .error {
       text-align: center;
       margin-top: 40vh;
@@ -46,6 +59,7 @@
     }
   </style>
 </head>
+
 <body>
   <div id="loader">
     <div class="spinner"></div>
@@ -55,7 +69,6 @@
 
   <script>
     (async () => {
-      // Obtengo la URL del parámetro "file"
       const params = new URLSearchParams(window.location.search);
       const fileParam = params.get('file');
       if (!fileParam) {
@@ -64,21 +77,20 @@
       }
       const pdfUrl = decodeURIComponent(fileParam);
 
-      // Configuro el worker de pdf.js
       pdfjsLib.GlobalWorkerOptions.workerSrc =
         'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
       try {
-        // Cargo el PDF
-        const pdf = await pdfjsLib.getDocument(pdfUrl).promise;
+        const resp = await fetch(pdfUrl);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const pdfData = await resp.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+
         const container = document.getElementById('pdf-images');
         const total = pdf.numPages;
-
-        // Oculto loader y muestro contenedor
         document.getElementById('loader').style.display = 'none';
         container.style.display = 'block';
 
-        // Renderizo cada página
         for (let num = 1; num <= total; num++) {
           const page = await pdf.getPage(num);
           const viewport = page.getViewport({ scale: 2 });
@@ -86,7 +98,6 @@
           canvas.width = viewport.width;
           canvas.height = viewport.height;
           const ctx = canvas.getContext('2d');
-
           await page.render({ canvasContext: ctx, viewport }).promise;
           container.appendChild(canvas);
         }
@@ -97,4 +108,5 @@
     })();
   </script>
 </body>
+
 </html>
