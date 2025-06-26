@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" type="image/svg+xml" href="/favicon.png" />
   <title>Municipalidad de San Fernando del Valle de Catamarca</title>
   <style>
@@ -51,6 +51,7 @@
       flex: 1;
       border: none;
       display: none;
+      min-height: 80vh;
     }
 
     .error {
@@ -69,6 +70,8 @@
       color: white;
       font-size: 1.2rem;
       flex-direction: column;
+      padding: 2rem;
+      text-align: center;
     }
 
     .spinner {
@@ -86,6 +89,12 @@
         transform: rotate(360deg);
       }
     }
+
+    .loader .message {
+      margin-top: 10px;
+      font-size: 1rem;
+      font-style: italic;
+    }
   </style>
 </head>
 
@@ -100,40 +109,70 @@
 
   <div id="loader" class="loader">
     <div class="spinner"></div>
-    Cargando documento...
+    <div>Cargando documento...</div>
+    <div class="message" id="loader-message"></div>
   </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const file = urlParams.get("file");
+    (function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const file = urlParams.get("file");
 
-    if (file) {
+      if (!file) {
+        document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
+        return;
+      }
+
       const iframe = document.createElement("iframe");
       const fileUrl = decodeURIComponent(file);
       iframe.src = fileUrl;
 
-      let fallbackTimeout;
+      let retryCount = 0;
+      const maxRetries = 3;
+      const retryDelay = 4000; // ms
+      const loaderMessage = document.getElementById("loader-message");
+
+      function updateLoaderMessage() {
+        if (retryCount === 0) {
+          loaderMessage.textContent = "";
+        } else {
+          loaderMessage.textContent = `Intentando recargar el documento... (intento ${retryCount} de ${maxRetries})`;
+        }
+      }
+
+      function reloadIframe() {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          updateLoaderMessage();
+          iframe.src = "";
+          setTimeout(() => {
+            iframe.src = fileUrl;
+          }, 100);
+        } else {
+          loaderMessage.textContent = "No se pudo cargar el documento. Por favor, recargá la página manualmente.";
+        }
+      }
 
       iframe.onload = () => {
-        clearTimeout(fallbackTimeout);
-        document.getElementById('loader').style.display = 'none';
-        iframe.style.display = 'block';
+        document.getElementById("loader").style.display = "none";
+        iframe.style.display = "block";
       };
 
       iframe.onerror = () => {
         setTimeout(() => {
-          iframe.src = fileUrl;
-        }, 3000);
-
-        fallbackTimeout = setTimeout(() => {
-          location.reload();
-        }, 7000);
+          reloadIframe();
+        }, retryDelay);
       };
 
       document.body.appendChild(iframe);
-    } else {
-      document.body.innerHTML = '<div class="error">No se proporcionó un archivo PDF válido.</div>';
-    }
+
+      setTimeout(() => {
+        if (iframe.style.display === "none") {
+          loaderMessage.textContent = "El documento está tardando en cargar, por favor esperá un momento...";
+        }
+      }, 8000);
+
+    })();
   </script>
 </body>
 
